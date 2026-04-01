@@ -1,4 +1,4 @@
-# Bird API — Open Source Web Service for X/Twitter
+# Bird REST API — Open Source Web Service for X/Twitter
 
 A lightweight, self-hosted REST API that wraps the [bird CLI](https://github.com/jawond/bird) to interact with X/Twitter. Designed for easy integration with no-code platforms like **n8n**, **Zapier**, and **Make**, and perfect for building AI avatars, content monitoring, and engagement workflows.
 
@@ -65,18 +65,23 @@ curl "http://localhost:3000/search?q=AI&n=5" \
 ```
 
 ### Health Check (no auth required)
+
 ```
 GET /health
 ```
+
 Returns `{ "status": "ok", "timestamp": "..." }`
 
 ### Verify Credentials
+
 ```
 GET /whoami
 ```
+
 Confirms your auth tokens are working.
 
 ### Post a Tweet
+
 ```
 POST /tweet
 Content-Type: application/json
@@ -85,6 +90,7 @@ Content-Type: application/json
 ```
 
 ### Reply to a Tweet
+
 ```
 POST /reply
 Content-Type: application/json
@@ -94,21 +100,27 @@ Content-Type: application/json
   "text": "Great point!"
 }
 ```
+
 `tweetId` can be a tweet ID or full URL (`https://x.com/user/status/...`).
 
 ### Read a Tweet
+
 ```
 GET /read?id=1234567890123456789
 ```
+
 Returns the full tweet object with author, engagement metrics, and media.
 
 ### Search Tweets
+
 ```
 GET /search?q=artificial+intelligence&n=5
 ```
+
 Supports X search operators. See **[CONTENT_SOURCING.md](CONTENT_SOURCING.md)** for full operator reference and search recipes.
 
 **Common query examples:**
+
 ```bash
 # High-engagement posts about AI
 q=AI+min_faves:500
@@ -124,27 +136,35 @@ q="large+language+models"+filter:links+since:2026-03-25
 ```
 
 ### Get Mentions
+
 ```
 GET /mentions?n=10
 ```
+
 Fetch the last `n` mentions of your account. Use this to power reply workflows.
 
 ### Get Replies to a Tweet
+
 ```
 GET /replies?id=1234567890123456789
 ```
+
 See how people are responding to a specific tweet.
 
 ### Get a Thread
+
 ```
 GET /thread?id=1234567890123456789
 ```
+
 Fetch an entire conversation thread for full context before replying.
 
 ### Get User Tweets
+
 ```
 GET /user-tweets?handle=elonmusk&n=20
 ```
+
 Get the last `n` tweets from a user. Handle auto-prefixed with `@` if omitted.
 
 ---
@@ -163,6 +183,7 @@ Headers:
 ```
 
 See **[USAGE.md](USAGE.md)** for complete n8n workflow patterns, including:
+
 - Topic monitoring workflows
 - News-driven post generation
 - Engagement and mention response workflows
@@ -176,11 +197,12 @@ See **[USAGE.md](USAGE.md)** for complete n8n workflow patterns, including:
 4. Pass query params or JSON body as needed
 
 Example (Zapier Code step):
-```javascript
-const fetch = require('node-fetch');
 
-const response = await fetch('https://your-bird-api.com/search?q=AI&n=5', {
-  headers: { 'x-api-key': process.env.API_SECRET }
+```javascript
+const fetch = require("node-fetch");
+
+const response = await fetch("https://your-bird-api.com/search?q=AI&n=5", {
+  headers: { "x-api-key": process.env.API_SECRET },
 });
 const data = await response.json();
 ```
@@ -189,14 +211,14 @@ const data = await response.json();
 
 ## 📚 Full Documentation
 
-| Document | Purpose |
-|----------|---------|
-| **[SETUP.md](SETUP.md)** | Getting X credentials, deployment guides (Railway, Docker, local), environment configuration, troubleshooting |
-| **[USAGE.md](USAGE.md)** | Workflow patterns for n8n, Zapier, Make; rate limiting & error handling; memory/deduplication; best practices |
-| **[CONTENT_SOURCING.md](CONTENT_SOURCING.md)** | Search operators reference, content sourcing recipes, integration with Google News RSS |
-| **[DEPLOYMENT.md](DEPLOYMENT.md)** | Quick deployment guides for Railway, Render, Fly.io, AWS, Google Cloud, DigitalOcean, Docker |
-| **[FAQ.md](FAQ.md)** | Common questions about setup, rate limits, integration, troubleshooting, best practices |
-| **[CONTRIBUTING.md](CONTRIBUTING.md)** | How to contribute, code style, PR process, issue templates |
+| Document                                       | Purpose                                                                                                       |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **[SETUP.md](SETUP.md)**                       | Getting X credentials, deployment guides (Railway, Docker, local), environment configuration, troubleshooting |
+| **[USAGE.md](USAGE.md)**                       | Workflow patterns for n8n, Zapier, Make; rate limiting & error handling; memory/deduplication; best practices |
+| **[CONTENT_SOURCING.md](CONTENT_SOURCING.md)** | Search operators reference, content sourcing recipes, integration with Google News RSS                        |
+| **[DEPLOYMENT.md](DEPLOYMENT.md)**             | Quick deployment guides for Railway, Render, Fly.io, AWS, Google Cloud, DigitalOcean, Docker                  |
+| **[FAQ.md](FAQ.md)**                           | Common questions about setup, rate limits, integration, troubleshooting, best practices                       |
+| **[CONTRIBUTING.md](CONTRIBUTING.md)**         | How to contribute, code style, PR process, issue templates                                                    |
 
 ---
 
@@ -217,6 +239,7 @@ For heavy usage, combine Bird with the [official X API](https://developer.twitte
 ## 🛠️ Development
 
 ### Project Structure
+
 ```
 bird-api/
 ├── server.js           # Main Express server
@@ -244,6 +267,7 @@ curl "http://localhost:3000/health"
 ### Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+
 - Reporting issues
 - Submitting feature requests
 - Code contributions and pull requests
@@ -269,17 +293,21 @@ MIT License — use freely in personal and commercial projects.
 ## ❓ Troubleshooting
 
 **"Unauthorized" error:**
+
 - Check that `x-api-key` header matches your `API_SECRET` env var
 
 **"Command not found" errors:**
+
 - Ensure [bird CLI](https://github.com/jawond/bird) is installed in your environment
 - On Railway, check that the Dockerfile installs bird correctly
 
 **Requests timing out:**
+
 - X's rate limits may be blocking you; wait 15+ minutes and try again
 - Reduce the `n` parameter in your requests
 
 **Stale cookies:**
+
 - Extract fresh `auth_token` and `ct0` from x.com; update your env vars
 
 See **[SETUP.md](SETUP.md)** for more troubleshooting and FAQ.
