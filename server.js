@@ -114,6 +114,13 @@ app.get('/thread', (req, res) => {
   res.json(runBird(['thread', id, '--json'], { parseJson: true }));
 });
 
+app.get('/home', (req, res) => {
+  const n = toPositiveInt(req.query.n, 20);
+  const args = ['home', '-n', String(n), '--json'];
+  if (req.query.following === 'true') args.splice(1, 0, '--following');
+  res.json(runBird(args, { parseJson: true }));
+});
+
 app.get('/user-tweets', (req, res) => {
   const handle = requireQueryParam(req, res, 'handle');
   if (!handle) return;
