@@ -66,6 +66,16 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+app.post('/credentials', (req, res) => {
+  const { auth_token, ct0 } = req.body || {};
+  if (!auth_token || !ct0) {
+    return res.status(400).json({ error: 'auth_token and ct0 are required' });
+  }
+  process.env.AUTH_TOKEN = String(auth_token);
+  process.env.CT0 = String(ct0);
+  return res.json({ success: true });
+});
+
 app.get('/whoami', (req, res) => {
   res.json(runBird(['whoami']));
 });
