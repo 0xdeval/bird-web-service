@@ -104,8 +104,14 @@ app.get('/read', (req, res) => {
 app.get('/search', (req, res) => {
   const q = requireQueryParam(req, res, 'q');
   if (!q) return;
-  const n = toPositiveInt(req.query.n, 5);
-  res.json(runBird(['search', q, '-n', String(n), '--json'], { parseJson: true }));
+  const args = ['search', q, '--json'];
+  if (req.query.all === 'true') {
+    args.push('--all');
+  } else {
+    const n = toPositiveInt(req.query.n, 5);
+    args.push('-n', String(n));
+  }
+  res.json(runBird(args, { parseJson: true }));
 });
 
 app.get('/mentions', (req, res) => {
