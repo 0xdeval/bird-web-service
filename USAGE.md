@@ -10,6 +10,7 @@ Complete patterns and examples for using Bird API in n8n, Zapier, Make, and cust
   - [Pattern 2: News-Driven Posts](#pattern-2-news-driven-posts)
   - [Pattern 3: Engagement Workflow](#pattern-3-engagement-workflow)
   - [Pattern 4: Mention Response](#pattern-4-mention-response)
+  - [Pattern 5: User Activity Audit](#pattern-5-user-activity-audit)
 - [Zapier / Make Integration](#zapier--make-integration)
 - [Rate Limiting & Error Handling](#rate-limiting--error-handling)
 - [Memory & Deduplication](#memory--deduplication)
@@ -90,6 +91,8 @@ Store in Data Table or Database
 | Method | GET |
 | URL | `{{ YOUR_BIRD_API_URL }}/search?q=AI+regulation+min_faves:50&n=10` |
 | Headers | `x-api-key: {{ YOUR_API_SECRET }}` |
+
+> **Tip**: Add `&all=true` instead of `&n=` to fetch all available pages of results automatically (no count limit). Useful when you don't know how many results to expect.
 
 **Code Node (JavaScript)**:
 ```javascript
@@ -420,6 +423,62 @@ Headers: x-api-key: {{ YOUR_API_SECRET }}
 
 **Data Table: Log Response**
 - Write `{ mention_id, replied_text, timestamp }`
+
+---
+
+### Pattern 5: User Activity Audit
+
+**Goal**: Fetch all of a user's tweets (or replies) from the last N days in one call.
+
+**Endpoint**: `GET /user-tweets`
+
+#### Parameters
+
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `handle` | string | required | Username (with or without `@`) |
+| `n` | number | 20 | Simple fetch — number of tweets, no pagination |
+| `maxPages` | number | — | Enable pagination mode; fetches up to N pages (max 10) |
+| `days` | number | — | When used with `maxPages`, filters out tweets older than N days |
+
+#### Modes
+
+**Simple fetch** (existing behaviour):
+```
+GET /user-tweets?handle=mike_krupin&n=20
+```
+
+**Paginated + date-filtered** (new):
+```
+GET /user-tweets?handle=mike_krupin&maxPages=10&days=7
+```
+Returns all tweets from the last 7 days, paginating through up to 10 pages automatically. Timeout is raised to 120s for this mode.
+
+#### n8n HTTP Request Node Configuration
+
+| Field | Value |
+|-------|-------|
+| Method | GET |
+| URL | `{{ YOUR_BIRD_API_URL }}/user-tweets?handle=mike_krupin&maxPages=10&days=7` |
+| Headers | `x-api-key: {{ YOUR_API_SECRET }}` |
+
+#### Filter replies client-side
+
+The endpoint returns all tweet types. To keep only replies in an n8n Code node:
+
+```javascript
+const tweets = $input.all()[0].body.data || [];
+const replies = tweets.filter(t => t.isReply === true || t.replyTo != null);
+return replies.map(t => ({ json: t }));
+```
+
+> **Note**: The exact field name for detecting replies (`isReply`, `replyTo`, `in_reply_to_id`, etc.) depends on what the `bird` CLI returns. Inspect a sample response first and adjust the filter accordingly.
+
+#### Limitations
+
+- Up to 10 pages max (CLI hard cap), roughly 200 tweets total
+- No `--all` flag available for this command (unlike `/search`)
+- For very active users posting >200 tweets in 7 days, use `/search?q=from:handle&all=true` instead
 
 ---
 

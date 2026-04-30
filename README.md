@@ -37,11 +37,11 @@ Use the tunnel URL and include header `x-api-key: your-secret-key` on requests.
 - `POST /tweet` body: `{ "text": "hello" }`
 - `POST /reply` body: `{ "tweetId": "123", "text": "hi" }`
 - `GET /read?id=<id-or-url>`
-- `GET /search?q=<query>&n=5`
+- `GET /search?q=<query>&n=5` — add `&all=true` to fetch all pages
 - `GET /mentions?n=10`
 - `GET /replies?id=<id-or-url>`
 - `GET /thread?id=<id-or-url>`
-- `GET /user-tweets?handle=<handle>&n=20`
+- `GET /user-tweets?handle=<handle>&n=20` — add `&maxPages=10&days=7` to paginate and filter by recency
 
 ## Example
 

@@ -141,8 +141,29 @@ app.get('/home', (req, res) => {
 app.get('/user-tweets', (req, res) => {
   const handle = requireQueryParam(req, res, 'handle');
   if (!handle) return;
-  const n = toPositiveInt(req.query.n, 20);
   const cleanHandle = handle.startsWith('@') ? handle : `@${handle}`;
+
+  const maxPages = toPositiveInt(req.query.maxPages, null);
+  const days = toPositiveInt(req.query.days, null);
+
+  if (maxPages) {
+    const args = ['user-tweets', cleanHandle, '-n', String(maxPages * 20), '--max-pages', String(maxPages), '--json'];
+    const result = runBird(args, { parseJson: true, timeout: 120000 });
+
+    if (days && result.success && Array.isArray(result.data)) {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - days);
+      result.data = result.data.filter(tweet => {
+        const raw = tweet.created_at || tweet.date || tweet.timestamp;
+        if (!raw) return true;
+        return new Date(raw) >= cutoff;
+      });
+    }
+
+    return res.json(result);
+  }
+
+  const n = toPositiveInt(req.query.n, 20);
   res.json(runBird(['user-tweets', cleanHandle, '-n', String(n), '--json'], { parseJson: true }));
 });
 
