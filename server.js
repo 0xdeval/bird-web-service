@@ -154,7 +154,7 @@ app.get('/user-tweets', (req, res) => {
       const cutoff = new Date();
       cutoff.setDate(cutoff.getDate() - days);
       result.data = result.data.filter(tweet => {
-        const raw = tweet.created_at || tweet.date || tweet.timestamp;
+        const raw = tweet.createdAt || tweet.created_at || tweet.date || tweet.timestamp;
         if (!raw) return true;
         return new Date(raw) >= cutoff;
       });
