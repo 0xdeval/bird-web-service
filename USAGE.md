@@ -5,6 +5,7 @@ Complete patterns and examples for using Bird API in n8n, Zapier, Make, and cust
 ## Table of Contents
 
 - [Basic Concepts](#basic-concepts)
+- [All Endpoints Reference](#all-endpoints-reference)
 - [n8n Workflow Patterns](#n8n-workflow-patterns)
   - [Pattern 1: Topic Monitoring](#pattern-1-topic-monitoring)
   - [Pattern 2: News-Driven Posts](#pattern-2-news-driven-posts)
@@ -62,6 +63,78 @@ Or on error:
   "output": ""
 }
 ```
+
+---
+
+## All Endpoints Reference
+
+### Utility
+
+| Method | Endpoint | Params / Body | Description |
+|--------|----------|---------------|-------------|
+| `GET` | `/health` | — | Health check, no auth required |
+| `GET` | `/whoami` | — | Show the authenticated X account |
+| `POST` | `/credentials` | `{ auth_token, ct0 }` | Update X session cookies at runtime without restarting |
+
+### Reading
+
+| Method | Endpoint | Params | Description |
+|--------|----------|--------|-------------|
+| `GET` | `/home` | `n=20`, `following=true` | Home timeline. Add `following=true` for Following-only feed |
+| `GET` | `/mentions` | `n=10` | Recent mentions of the authenticated account |
+| `GET` | `/read` | `id=<tweet-id-or-url>` | Read a single tweet |
+| `GET` | `/replies` | `id=<tweet-id-or-url>` | Replies to a tweet |
+| `GET` | `/thread` | `id=<tweet-id-or-url>` | Full thread for a tweet |
+| `GET` | `/search` | `q=<query>`, `n=5`, `all=true` | Search tweets. Use `all=true` instead of `n` to fetch all pages |
+| `GET` | `/user-tweets` | `handle`, `n=20`, `maxPages`, `days` | Tweets from a specific user |
+
+### Writing
+
+| Method | Endpoint | Body | Description |
+|--------|----------|------|-------------|
+| `POST` | `/tweet` | `{ "text": "..." }` | Post a new tweet |
+| `POST` | `/reply` | `{ "tweetId": "...", "text": "..." }` | Reply to a tweet |
+
+---
+
+### Endpoint Details
+
+#### `POST /credentials`
+
+Push fresh X cookies to a running instance without restarting. Useful after cookies expire.
+
+```bash
+curl -X POST http://localhost:3000/credentials \
+  -H "x-api-key: your-secret-key" \
+  -H "Content-Type: application/json" \
+  -d '{ "auth_token": "your_new_token", "ct0": "your_new_ct0" }'
+```
+
+Response: `{ "success": true }`
+
+> Credentials are applied immediately and persist until the process restarts. For permanent storage, update your `.env` file or deployment environment variables too.
+
+---
+
+#### `GET /home`
+
+Fetch your home timeline.
+
+```bash
+# Default timeline (all accounts)
+GET /home?n=20
+
+# Following-only feed (equivalent to "Following" tab on X)
+GET /home?following=true&n=20
+```
+
+**n8n HTTP Request Node**:
+
+| Field | Value |
+|-------|-------|
+| Method | GET |
+| URL | `{{ YOUR_BIRD_API_URL }}/home?n=20` |
+| Headers | `x-api-key: {{ YOUR_API_SECRET }}` |
 
 ---
 
@@ -445,12 +518,12 @@ Headers: x-api-key: {{ YOUR_API_SECRET }}
 
 **Simple fetch** (existing behaviour):
 ```
-GET /user-tweets?handle=mike_krupin&n=20
+GET /user-tweets?handle=your_handle&n=20
 ```
 
 **Paginated + date-filtered** (new):
 ```
-GET /user-tweets?handle=mike_krupin&maxPages=10&days=7
+GET /user-tweets?handle=your_handle&maxPages=10&days=7
 ```
 Returns all tweets from the last 7 days, paginating through up to 10 pages automatically. Timeout is raised to 120s for this mode.
 
@@ -459,7 +532,7 @@ Returns all tweets from the last 7 days, paginating through up to 10 pages autom
 | Field | Value |
 |-------|-------|
 | Method | GET |
-| URL | `{{ YOUR_BIRD_API_URL }}/user-tweets?handle=mike_krupin&maxPages=10&days=7` |
+| URL | `{{ YOUR_BIRD_API_URL }}/user-tweets?handle=your_handle&maxPages=10&days=7` |
 | Headers | `x-api-key: {{ YOUR_API_SECRET }}` |
 
 #### Filter replies client-side

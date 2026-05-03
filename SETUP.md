@@ -65,11 +65,11 @@ Railway is the easiest way to deploy Bird API with persistent storage and automa
 
 ```bash
 # Fork or clone this repo
-git clone https://github.com/your-username/bird-api.git
+git clone https://github.com/YOUR_USERNAME/bird-api.git
 cd bird-api
 
 # Push to GitHub (Railway needs a GitHub repo)
-git remote set-url origin https://github.com/your-username/bird-api.git
+git remote set-url origin https://github.com/YOUR_USERNAME/bird-api.git
 git push -u origin main
 ```
 
@@ -129,7 +129,7 @@ Deploy Bird API in a Docker container (locally or to any cloud provider).
 #### 1. Build Image
 
 ```bash
-git clone https://github.com/your-username/bird-api.git
+git clone https://github.com/YOUR_USERNAME/bird-api.git
 cd bird-api
 docker build -t bird-api .
 ```
@@ -426,5 +426,5 @@ Pro tip: Set a calendar reminder to refresh cookies monthly.
 ## Need Help?
 
 - Check [TROUBLESHOOTING](#troubleshooting) above
-- Open an issue on [GitHub](https://github.com/your-username/bird-api/issues)
+- Open an issue on [GitHub](https://github.com/YOUR_USERNAME/bird-api/issues)
 - See the [bird CLI docs](https://github.com/jawond/bird) for CLI-specific questions

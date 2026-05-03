@@ -150,10 +150,10 @@ app.get('/user-tweets', (req, res) => {
     const args = ['user-tweets', cleanHandle, '-n', String(maxPages * 20), '--max-pages', String(maxPages), '--json'];
     const result = runBird(args, { parseJson: true, timeout: 120000 });
 
-    if (days && result.success && Array.isArray(result.data)) {
+    if (days && result.success && Array.isArray(result.data?.tweets)) {
       const cutoff = new Date();
       cutoff.setDate(cutoff.getDate() - days);
-      result.data = result.data.filter(tweet => {
+      result.data.tweets = result.data.tweets.filter(tweet => {
         const raw = tweet.createdAt || tweet.created_at || tweet.date || tweet.timestamp;
         if (!raw) return true;
         return new Date(raw) >= cutoff;

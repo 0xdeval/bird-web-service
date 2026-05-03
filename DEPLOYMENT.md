@@ -22,9 +22,9 @@ Railway is the easiest option for most users.
 ### 1. Prepare Your Repository
 
 ```bash
-git clone https://github.com/your-username/bird-api.git
+git clone https://github.com/YOUR_USERNAME/bird-api.git
 cd bird-api
-git remote set-url origin https://github.com/your-username/bird-api.git
+git remote set-url origin https://github.com/YOUR_USERNAME/bird-api.git
 git push -u origin main
 ```
 
@@ -301,7 +301,7 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Clone repo
-git clone https://github.com/your-username/bird-api.git
+git clone https://github.com/YOUR_USERNAME/bird-api.git
 cd bird-api
 
 # Install dependencies
@@ -330,7 +330,7 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
 # Clone repo, build, run
-git clone https://github.com/your-username/bird-api.git
+git clone https://github.com/YOUR_USERNAME/bird-api.git
 cd bird-api
 docker build -t bird-api .
 docker run -d -p 3000:3000 \
